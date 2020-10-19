@@ -17,6 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+        buzzer.cpp \
         main.cpp \
         mainwindow.cpp
 
@@ -28,8 +29,9 @@ QML_IMPORT_PATH =
 # Additional import path used to resolve QML modules just for Qt Quick Designer
 QML_DESIGNER_IMPORT_PATH =
 
+QMAKE_CXXFLAGS += -pthread
 INCLUDEPATH += /opt/qt5pi/sysroot/include/opencv4 /opt/qt5pi/sysroot/include
-LIBS += -L/opt/qt5pi/sysroot/lib -lraspicam -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect -lopencv_videoio -lopencv_imgcodecs -lopencv_flann
+LIBS += -L/opt/qt5pi/sysroot/lib -pthread -lraspicam -lpigpio -lrt -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect -lopencv_videoio -lopencv_imgcodecs -lopencv_flann
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -40,4 +42,5 @@ FORMS += \
     mainwindow.ui
 
 HEADERS += \
+    buzzer.h \
     mainwindow.h

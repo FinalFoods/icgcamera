@@ -9,6 +9,7 @@ int main(int argc, char *argv[])
     MainWindow w;
     QTimer timer;
 
+    w.setWindowState(Qt::WindowFullScreen);
     w.show();
 
     QObject::connect(&timer, &QTimer::timeout, [&]()

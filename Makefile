@@ -16,7 +16,7 @@ CC            = /opt/qt5pi/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/b
 CXX           = /opt/qt5pi/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-g++
 DEFINES       = -DQT_DEPRECATED_WARNINGS -DQT_NO_DEBUG -DQT_QUICK_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_QMLMODELS_LIB -DQT_QML_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB
 CFLAGS        = -march=armv8-a -mtune=cortex-a72 -mfpu=crypto-neon-fp-armv8 -mfloat-abi=hard --sysroot=/opt/qt5pi/sysroot -O2 -Wall -Wextra -D_REENTRANT -fPIC $(DEFINES)
-CXXFLAGS      = -march=armv8-a -mtune=cortex-a72 -mfpu=crypto-neon-fp-armv8 -mfloat-abi=hard --sysroot=/opt/qt5pi/sysroot -O2 -std=gnu++11 -Wall -Wextra -D_REENTRANT -fPIC $(DEFINES)
+CXXFLAGS      = -march=armv8-a -mtune=cortex-a72 -mfpu=crypto-neon-fp-armv8 -mfloat-abi=hard --sysroot=/opt/qt5pi/sysroot -pthread -O2 -std=gnu++11 -Wall -Wextra -D_REENTRANT -fPIC $(DEFINES)
 INCPATH       = -I. -I/opt/qt5pi/sysroot/include/opencv4 -I/opt/qt5pi/sysroot/include -I/opt/qt5pi/sysroot/usr/local/qt5pi/include -I/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtQuick -I/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets -I/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui -I/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtQmlModels -I/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtQml -I/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtNetwork -I/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore -I. -I. -I/opt/qt5pi/sysroot/usr/local/qt5pi/mkspecs/devices/linux-rasp-pi4-v3d-g++
 QMAKE         = /opt/qt5pi/sysroot/usr/local/qt5pi/bin/qmake
 DEL_FILE      = rm -f
@@ -40,7 +40,7 @@ DISTNAME      = captureQt1.0.0
 DISTDIR = /home/marco/Devel/captureQt/captureQt/.tmp/captureQt1.0.0
 LINK          = /opt/qt5pi/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-g++
 LFLAGS        = -mfloat-abi=hard --sysroot=/opt/qt5pi/sysroot -Wl,-O1 -Wl,-rpath,/usr/local/qt5pi/lib -Wl,-rpath-link,/opt/qt5pi/sysroot/usr/lib/arm-linux-gnueabihf -Wl,-rpath-link,/opt/qt5pi/sysroot/lib/arm-linux-gnueabihf
-LIBS          = $(SUBLIBS) -L/opt/qt5pi/sysroot/lib -lraspicam -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect -lopencv_videoio -lopencv_imgcodecs -lopencv_flann /opt/qt5pi/sysroot/usr/local/qt5pi/lib/libQt5Quick.so /opt/qt5pi/sysroot/usr/local/qt5pi/lib/libQt5Widgets.so /opt/qt5pi/sysroot/usr/local/qt5pi/lib/libQt5Gui.so /opt/qt5pi/sysroot/usr/local/qt5pi/lib/libQt5QmlModels.so /opt/qt5pi/sysroot/usr/local/qt5pi/lib/libQt5Qml.so /opt/qt5pi/sysroot/usr/local/qt5pi/lib/libQt5Network.so /opt/qt5pi/sysroot/usr/local/qt5pi/lib/libQt5Core.so -L/opt/qt5pi/sysroot/usr/lib/arm-linux-gnueabihf -lGLESv2 -lpthread   
+LIBS          = $(SUBLIBS) -L/opt/qt5pi/sysroot/lib -pthread -lraspicam -lpigpio -lrt -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect -lopencv_videoio -lopencv_imgcodecs -lopencv_flann /opt/qt5pi/sysroot/usr/local/qt5pi/lib/libQt5Quick.so /opt/qt5pi/sysroot/usr/local/qt5pi/lib/libQt5Widgets.so /opt/qt5pi/sysroot/usr/local/qt5pi/lib/libQt5Gui.so /opt/qt5pi/sysroot/usr/local/qt5pi/lib/libQt5QmlModels.so /opt/qt5pi/sysroot/usr/local/qt5pi/lib/libQt5Qml.so /opt/qt5pi/sysroot/usr/local/qt5pi/lib/libQt5Network.so /opt/qt5pi/sysroot/usr/local/qt5pi/lib/libQt5Core.so -L/opt/qt5pi/sysroot/usr/lib/arm-linux-gnueabihf -lGLESv2 -lpthread   
 AR            = /opt/qt5pi/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-ar cqs
 RANLIB        = 
 SED           = sed
@@ -52,10 +52,14 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = main.cpp \
-		mainwindow.cpp moc_mainwindow.cpp
-OBJECTS       = main.o \
+SOURCES       = buzzer.cpp \
+		main.cpp \
+		mainwindow.cpp moc_buzzer.cpp \
+		moc_mainwindow.cpp
+OBJECTS       = buzzer.o \
+		main.o \
 		mainwindow.o \
+		moc_buzzer.o \
 		moc_mainwindow.o
 DIST          = /opt/qt5pi/sysroot/usr/local/qt5pi/mkspecs/features/spec_pre.prf \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/mkspecs/common/unix.conf \
@@ -253,7 +257,9 @@ DIST          = /opt/qt5pi/sysroot/usr/local/qt5pi/mkspecs/features/spec_pre.prf
 		/opt/qt5pi/sysroot/usr/local/qt5pi/mkspecs/features/exceptions.prf \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/mkspecs/features/yacc.prf \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/mkspecs/features/lex.prf \
-		captureQt.pro mainwindow.h main.cpp \
+		captureQt.pro buzzer.h \
+		mainwindow.h buzzer.cpp \
+		main.cpp \
 		mainwindow.cpp
 QMAKE_TARGET  = captureQt
 DESTDIR       = 
@@ -676,8 +682,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /opt/qt5pi/sysroot/usr/local/qt5pi/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents mainwindow.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp mainwindow.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents buzzer.h mainwindow.h $(DISTDIR)/
+	$(COPY_FILE) --parents buzzer.cpp main.cpp mainwindow.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents mainwindow.ui $(DISTDIR)/
 
 
@@ -713,11 +719,82 @@ compiler_moc_predefs_make_all: moc_predefs.h
 compiler_moc_predefs_clean:
 	-$(DEL_FILE) moc_predefs.h
 moc_predefs.h: /opt/qt5pi/sysroot/usr/local/qt5pi/mkspecs/features/data/dummy.cpp
-	/opt/qt5pi/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-g++ -march=armv8-a -mtune=cortex-a72 -mfpu=crypto-neon-fp-armv8 -mfloat-abi=hard --sysroot=/opt/qt5pi/sysroot -O2 -std=gnu++11 -Wall -Wextra -dM -E -o moc_predefs.h /opt/qt5pi/sysroot/usr/local/qt5pi/mkspecs/features/data/dummy.cpp
+	/opt/qt5pi/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-g++ -march=armv8-a -mtune=cortex-a72 -mfpu=crypto-neon-fp-armv8 -mfloat-abi=hard --sysroot=/opt/qt5pi/sysroot -pthread -O2 -std=gnu++11 -Wall -Wextra -dM -E -o moc_predefs.h /opt/qt5pi/sysroot/usr/local/qt5pi/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_mainwindow.cpp
+compiler_moc_header_make_all: moc_buzzer.cpp moc_mainwindow.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_mainwindow.cpp
+	-$(DEL_FILE) moc_buzzer.cpp moc_mainwindow.cpp
+moc_buzzer.cpp: buzzer.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/QObject \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qobject.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qobjectdefs.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qnamespace.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qglobal.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qconfig-bootstrapped.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qconfig.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qtcore-config.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qsystemdetection.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qprocessordetection.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qcompilerdetection.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qtypeinfo.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qsysinfo.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qlogging.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qflags.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qatomic.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qbasicatomic.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qatomic_bootstrap.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qgenericatomic.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qatomic_cxx11.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qatomic_msvc.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qglobalstatic.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qmutex.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qnumeric.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qversiontagging.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qobjectdefs_impl.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qstring.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qchar.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qbytearray.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qrefcount.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qarraydata.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qstringliteral.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qstringalgorithms.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qstringview.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qstringbuilder.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qlist.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qalgorithms.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qiterator.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qhashfunctions.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qpair.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qvector.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qcontainertools_impl.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qpoint.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qbytearraylist.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qstringlist.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qregexp.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qstringmatcher.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qcoreevent.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qscopedpointer.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qmetatype.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qvarlengtharray.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qcontainerfwd.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qobject_impl.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/QDebug \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qdebug.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qhash.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qmap.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qtextstream.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qiodevice.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qlocale.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qvariant.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qshareddata.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qset.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qcontiguouscache.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qsharedpointer.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qsharedpointer_impl.h \
+		moc_predefs.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/bin/moc
+	/opt/qt5pi/sysroot/usr/local/qt5pi/bin/moc $(DEFINES) --include /home/marco/Devel/captureQt/captureQt/moc_predefs.h -I/opt/qt5pi/sysroot/usr/local/qt5pi/mkspecs/devices/linux-rasp-pi4-v3d-g++ -I/home/marco/Devel/captureQt/captureQt -I/opt/qt5pi/sysroot/include/opencv4 -I/opt/qt5pi/sysroot/include -I/opt/qt5pi/sysroot/usr/local/qt5pi/include -I/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtQuick -I/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets -I/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui -I/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtQmlModels -I/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtQml -I/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtNetwork -I/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore -I/opt/qt5pi/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/include/c++/7.5.0 -I/opt/qt5pi/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/include/c++/7.5.0/arm-linux-gnueabihf -I/opt/qt5pi/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/include/c++/7.5.0/backward -I/opt/qt5pi/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/7.5.0/include -I/opt/qt5pi/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/7.5.0/include-fixed -I/opt/qt5pi/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/include -I/opt/qt5pi/sysroot/usr/include/arm-linux-gnueabihf -I/opt/qt5pi/sysroot/usr/include buzzer.h -o moc_buzzer.cpp
+
 moc_mainwindow.cpp: mainwindow.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets/QMainWindow \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets/qmainwindow.h \
@@ -832,6 +909,9 @@ moc_mainwindow.cpp: mainwindow.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qpen.h \
 		/opt/qt5pi/sysroot/include/raspicam/raspicam.h \
 		/opt/qt5pi/sysroot/include/raspicam/raspicamtypes.h \
+		buzzer.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/QObject \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/QDebug \
 		moc_predefs.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/bin/moc
 	/opt/qt5pi/sysroot/usr/local/qt5pi/bin/moc $(DEFINES) --include /home/marco/Devel/captureQt/captureQt/moc_predefs.h -I/opt/qt5pi/sysroot/usr/local/qt5pi/mkspecs/devices/linux-rasp-pi4-v3d-g++ -I/home/marco/Devel/captureQt/captureQt -I/opt/qt5pi/sysroot/include/opencv4 -I/opt/qt5pi/sysroot/include -I/opt/qt5pi/sysroot/usr/local/qt5pi/include -I/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtQuick -I/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets -I/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui -I/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtQmlModels -I/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtQml -I/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtNetwork -I/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore -I/opt/qt5pi/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/include/c++/7.5.0 -I/opt/qt5pi/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/include/c++/7.5.0/arm-linux-gnueabihf -I/opt/qt5pi/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/include/c++/7.5.0/backward -I/opt/qt5pi/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/7.5.0/include -I/opt/qt5pi/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/7.5.0/include-fixed -I/opt/qt5pi/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/include -I/opt/qt5pi/sysroot/usr/include/arm-linux-gnueabihf -I/opt/qt5pi/sysroot/usr/include mainwindow.h -o moc_mainwindow.cpp
@@ -857,11 +937,9 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean compiler_ui
 
 ####### Compile
 
-main.o: main.cpp mainwindow.h \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets/QMainWindow \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets/qmainwindow.h \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets/qtwidgetsglobal.h \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qtguiglobal.h \
+buzzer.o: buzzer.cpp /opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/QDebug \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qdebug.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qalgorithms.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qglobal.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qconfig-bootstrapped.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qconfig.h \
@@ -883,15 +961,80 @@ main.o: main.cpp mainwindow.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qmutex.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qnumeric.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qversiontagging.h \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qtgui-config.h \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets/qtwidgets-config.h \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets/qwidget.h \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qwindowdefs.h \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qobjectdefs.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qhash.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qchar.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qiterator.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qlist.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qrefcount.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qarraydata.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qhashfunctions.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qstring.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qbytearray.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qnamespace.h \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qobjectdefs_impl.h \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qwindowdefs_win.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qstringliteral.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qstringalgorithms.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qstringview.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qstringbuilder.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qpair.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qvector.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qcontainertools_impl.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qpoint.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qbytearraylist.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qstringlist.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qregexp.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qstringmatcher.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qmap.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qtextstream.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qiodevice.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qobject.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qobjectdefs.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qobjectdefs_impl.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qcoreevent.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qscopedpointer.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qmetatype.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qvarlengtharray.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qcontainerfwd.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qobject_impl.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qlocale.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qvariant.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qshareddata.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qset.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qcontiguouscache.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qsharedpointer.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qsharedpointer_impl.h \
+		buzzer.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/QObject \
+		/opt/qt5pi/sysroot/include/pigpio/pigpio.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o buzzer.o buzzer.cpp
+
+main.o: main.cpp /opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/QTimer \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qtimer.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qglobal.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qconfig-bootstrapped.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qconfig.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qtcore-config.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qsystemdetection.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qprocessordetection.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qcompilerdetection.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qtypeinfo.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qsysinfo.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qlogging.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qflags.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qatomic.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qbasicatomic.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qatomic_bootstrap.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qgenericatomic.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qatomic_cxx11.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qatomic_msvc.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qglobalstatic.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qmutex.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qnumeric.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qversiontagging.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qbasictimer.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qnamespace.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qobject.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qobjectdefs.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qobjectdefs_impl.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qstring.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qchar.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qbytearray.h \
@@ -919,10 +1062,23 @@ main.o: main.cpp mainwindow.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qvarlengtharray.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qcontainerfwd.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qobject_impl.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets/QApplication \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets/qapplication.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets/qtwidgetsglobal.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qtguiglobal.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qtgui-config.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets/qtwidgets-config.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qcoreapplication.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qeventloop.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qwindowdefs.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qwindowdefs_win.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qsize.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qmargins.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qcursor.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets/qdesktopwidget.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets/qwidget.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qpaintdevice.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qrect.h \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qsize.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qpalette.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qcolor.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qrgb.h \
@@ -947,7 +1103,6 @@ main.o: main.cpp mainwindow.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qfontmetrics.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qfontinfo.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets/qsizepolicy.h \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qcursor.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qkeysequence.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qevent.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qvariant.h \
@@ -963,6 +1118,12 @@ main.o: main.cpp mainwindow.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qfiledevice.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qvector2d.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qtouchdevice.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qguiapplication.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qinputmethod.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/QDebug \
+		mainwindow.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets/QMainWindow \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets/qmainwindow.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets/qtabwidget.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qicon.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/QPainter \
@@ -971,13 +1132,8 @@ main.o: main.cpp mainwindow.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qpen.h \
 		/opt/qt5pi/sysroot/include/raspicam/raspicam.h \
 		/opt/qt5pi/sysroot/include/raspicam/raspicamtypes.h \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets/QApplication \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets/qapplication.h \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qcoreapplication.h \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qeventloop.h \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets/qdesktopwidget.h \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qguiapplication.h \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qinputmethod.h
+		buzzer.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/QObject
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
 mainwindow.o: mainwindow.cpp /opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/QImage \
@@ -1054,6 +1210,20 @@ mainwindow.o: mainwindow.cpp /opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/QI
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qobject_impl.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qline.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qpainterpath.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/QDebug \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qdebug.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qhash.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qmap.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qtextstream.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qlocale.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qvariant.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qshareddata.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qset.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qcontiguouscache.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qsharedpointer.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qsharedpointer_impl.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/QThread \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qthread.h \
 		/opt/qt5pi/sysroot/include/opencv4/opencv2/opencv.hpp \
 		/opt/qt5pi/sysroot/include/opencv4/opencv2/opencv_modules.hpp \
 		/opt/qt5pi/sysroot/include/opencv4/opencv2/core.hpp \
@@ -1157,6 +1327,7 @@ mainwindow.o: mainwindow.cpp /opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/QI
 		/opt/qt5pi/sysroot/include/opencv4/opencv2/video/background_segm.hpp \
 		/opt/qt5pi/sysroot/include/raspicam/raspicam.h \
 		/opt/qt5pi/sysroot/include/raspicam/raspicamtypes.h \
+		/opt/qt5pi/sysroot/include/pigpio/pigpio.h \
 		mainwindow.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets/QMainWindow \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets/qmainwindow.h \
@@ -1166,10 +1337,6 @@ mainwindow.o: mainwindow.cpp /opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/QI
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qpalette.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qbrush.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qpixmap.h \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qsharedpointer.h \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qshareddata.h \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qhash.h \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qsharedpointer_impl.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qfont.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qfontmetrics.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qfontinfo.h \
@@ -1177,13 +1344,6 @@ mainwindow.o: mainwindow.cpp /opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/QI
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qcursor.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qkeysequence.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qevent.h \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qvariant.h \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qmap.h \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qdebug.h \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qtextstream.h \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qlocale.h \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qset.h \
-		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qcontiguouscache.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qurl.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qurlquery.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qfile.h \
@@ -1196,8 +1356,22 @@ mainwindow.o: mainwindow.cpp /opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/QI
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qpainter.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qtextoption.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qpen.h \
-		ui_mainwindow.h
+		buzzer.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/QObject \
+		ui_mainwindow.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/QVariant \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets/QApplication \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets/qapplication.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qcoreapplication.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qeventloop.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets/qdesktopwidget.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qguiapplication.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qinputmethod.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets/QWidget
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o mainwindow.cpp
+
+moc_buzzer.o: moc_buzzer.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_buzzer.o moc_buzzer.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
