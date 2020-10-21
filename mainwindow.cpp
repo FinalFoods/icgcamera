@@ -18,6 +18,9 @@
 
 using namespace cv;
 
+#define BUZZER_PIN 21
+#define SHUTTER_PIN 16
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -25,47 +28,28 @@ MainWindow::MainWindow(QWidget *parent) :
     int ret;
 
     ui->setupUi(this);
-    // image buffer
-    imbuf = ::operator new(Camera.getImageTypeSize(raspicam::RASPICAM_FORMAT_BGR));
+    // -- image buffer setup
+    imSize = Camera.getImageTypeSize(raspicam::RASPICAM_FORMAT_BGR);
+    imbuf = ::operator new(imSize);
+
+    // -- initialize pigpio library
     if (gpioInitialise() < 0) {
         qInfo("Error in gpioInitialise().");
     }
 
-    buzzer.setPin(21);
-/*
-    buzzer_pin = 21;
-
-    if (gpioSetMode(buzzer_pin, PI_OUTPUT) != 0) {
-        qInfo("in Buzzer::Buzzer. Error in gpioSetMode pin %d", buzzer_pin);
-    }
-*/
-    /*
-    buzzerThread = new QThread;
-    Buzzer *buzzerObject = new Buzzer;
-
-    buzzerObject->moveToThread(buzzerThread);
-    connect(buzzerThread, &QThread::started, buzzerObject, &Buzzer::process);
-    connect(buzzerObject, &Buzzer::doneProcess, buzzerThread, &QThread::quit);
-    connect(buzzerObject, &Buzzer::showResults, this, &MainWindow::handleResults);
-    */
-    //connect(buzzerThread, &QThread::finished, buzzerObject, &Buzzer::deleteLater);
-    //buzzerThread->start();
-
-    // ----------------------- interrupt setup
-    // $ sudo -i
-    // # echo "16" > /sys/class/gpio/export
-    // # gpio -g mode 16 up
+    // -- buzzer setup
+    buzzer.setPin(BUZZER_PIN);
 
     // ------------------ shutter button setup
-    int shutter_button = 16;
-    gpioSetMode(shutter_button, PI_INPUT);
-    gpioSetAlertFuncEx(shutter_button, _callbackExt, (void *)this);
+    gpioSetMode(SHUTTER_PIN, PI_INPUT);
+    gpioSetPullUpDown(SHUTTER_PIN, PI_PUD_UP);
+    gpioSetAlertFuncEx(SHUTTER_PIN, _callbackExt, (void *)this);
     debounce = 250;
 
     // ----------------------- camera setup
     Camera.setVerticalFlip(true);
     //Open camera
-    qInfo(" Opening Camera...");
+    qInfo("Opening Camera...");
     if (!Camera.open()) {
         qInfo("Error opening camera");
         return;
@@ -75,7 +59,6 @@ MainWindow::MainWindow(QWidget *parent) :
     qInfo("Sleeping for 3 secs");
     usleep(3000000);
     qInfo("Camera ready.");
-
 }
 
 MainWindow::~MainWindow()
@@ -91,20 +74,12 @@ void MainWindow::_callback(int gpio, int level, uint32_t tick)
 {
     int ret;
 
-    qInfo("in_callback. starting buzzer.");
+    if (buzzer.isPlaying())
+            return;
+
+    qInfo("in_callback. starting buzzer and save image.");
     buzzer.play();
-
-/*
-    if ((ret = gpioWrite(buzzer_pin, 1)) != 0) {
-        qInfo("in Buzzer::process. Error writing pin %d (1)", ret);
-    }
-
-    gpioSleep(PI_TIME_RELATIVE, 1, 100000); // sleep for 1.1 sec
-    if ((ret = gpioWrite(buzzer_pin, 0)) != 0) {
-        qInfo("in Buzzer::process. Error writing pin %d (1)", ret);
-    }
-*/
-    //buzzerThread->start();
+    storage.saveImage(imbuf, imSize, Camera.getWidth(), Camera.getHeight());
 }
 
 void MainWindow::_callbackExt(int gpio, int level, uint32_t tick, void *user)
@@ -114,7 +89,7 @@ void MainWindow::_callbackExt(int gpio, int level, uint32_t tick, void *user)
     auto time_now = std::chrono::high_resolution_clock::now();
     std::chrono::duration< double > delta = time_now - (mySelf->last_time);
     std::chrono::milliseconds d = std::chrono::duration_cast < std::chrono::milliseconds >(delta);
-    // qInfo("in_callbackExt. %d", d.count());
+
     mySelf->last_time = time_now;
     if (d.count() < mySelf->debounce)
         return;
@@ -128,8 +103,7 @@ void MainWindow::paintEvent(QPaintEvent* event)
 
     Camera.grab();
     // extract the image
-    // Camera.retrieve((unsigned char *)imbuf, raspicam::RASPICAM_FORMAT_BGR);
-    Camera.retrieve((unsigned char *)imbuf, raspicam::RASPICAM_FORMAT_IGNORE);
+    Camera.retrieve((unsigned char *)imbuf, raspicam::RASPICAM_FORMAT_IGNORE);  // RASPICAM_FORMAT_BGR
 
 /*
     // obtain a Mat image from the capture

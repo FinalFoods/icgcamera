@@ -54,11 +54,13 @@ OBJECTS_DIR   = ./
 
 SOURCES       = buzzer.cpp \
 		main.cpp \
-		mainwindow.cpp moc_buzzer.cpp \
+		mainwindow.cpp \
+		storage.cpp moc_buzzer.cpp \
 		moc_mainwindow.cpp
 OBJECTS       = buzzer.o \
 		main.o \
 		mainwindow.o \
+		storage.o \
 		moc_buzzer.o \
 		moc_mainwindow.o
 DIST          = /opt/qt5pi/sysroot/usr/local/qt5pi/mkspecs/features/spec_pre.prf \
@@ -258,9 +260,11 @@ DIST          = /opt/qt5pi/sysroot/usr/local/qt5pi/mkspecs/features/spec_pre.prf
 		/opt/qt5pi/sysroot/usr/local/qt5pi/mkspecs/features/yacc.prf \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/mkspecs/features/lex.prf \
 		captureQt.pro buzzer.h \
-		mainwindow.h buzzer.cpp \
+		mainwindow.h \
+		storage.h buzzer.cpp \
 		main.cpp \
-		mainwindow.cpp
+		mainwindow.cpp \
+		storage.cpp
 QMAKE_TARGET  = captureQt
 DESTDIR       = 
 TARGET        = captureQt
@@ -682,8 +686,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /opt/qt5pi/sysroot/usr/local/qt5pi/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents buzzer.h mainwindow.h $(DISTDIR)/
-	$(COPY_FILE) --parents buzzer.cpp main.cpp mainwindow.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents buzzer.h mainwindow.h storage.h $(DISTDIR)/
+	$(COPY_FILE) --parents buzzer.cpp main.cpp mainwindow.cpp storage.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents mainwindow.ui $(DISTDIR)/
 
 
@@ -1369,6 +1373,74 @@ mainwindow.o: mainwindow.cpp /opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/QI
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtGui/qinputmethod.h \
 		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtWidgets/QWidget
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o mainwindow.cpp
+
+storage.o: storage.cpp /opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/QDebug \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qdebug.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qalgorithms.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qglobal.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qconfig-bootstrapped.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qconfig.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qtcore-config.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qsystemdetection.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qprocessordetection.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qcompilerdetection.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qtypeinfo.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qsysinfo.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qlogging.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qflags.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qatomic.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qbasicatomic.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qatomic_bootstrap.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qgenericatomic.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qatomic_cxx11.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qatomic_msvc.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qglobalstatic.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qmutex.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qnumeric.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qversiontagging.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qhash.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qchar.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qiterator.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qlist.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qrefcount.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qarraydata.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qhashfunctions.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qstring.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qbytearray.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qnamespace.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qstringliteral.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qstringalgorithms.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qstringview.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qstringbuilder.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qpair.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qvector.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qcontainertools_impl.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qpoint.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qbytearraylist.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qstringlist.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qregexp.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qstringmatcher.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qmap.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qtextstream.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qiodevice.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qobject.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qobjectdefs.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qobjectdefs_impl.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qcoreevent.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qscopedpointer.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qmetatype.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qvarlengtharray.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qcontainerfwd.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qobject_impl.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qlocale.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qvariant.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qshareddata.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qset.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qcontiguouscache.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qsharedpointer.h \
+		/opt/qt5pi/sysroot/usr/local/qt5pi/include/QtCore/qsharedpointer_impl.h \
+		storage.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o storage.o storage.cpp
 
 moc_buzzer.o: moc_buzzer.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_buzzer.o moc_buzzer.cpp

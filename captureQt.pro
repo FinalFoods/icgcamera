@@ -19,7 +19,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         buzzer.cpp \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+        storage.cpp
 
 #RESOURCES += qml.qrc
 
@@ -43,4 +44,5 @@ FORMS += \
 
 HEADERS += \
     buzzer.h \
-    mainwindow.h
+    mainwindow.h \
+    storage.h

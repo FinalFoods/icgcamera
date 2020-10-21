@@ -8,6 +8,7 @@ class Buzzer : QObject
 {
     Q_OBJECT
     int buzzer_pin;
+    static bool busy;
 
 private:
     static void *_play(void *arg);
@@ -18,6 +19,8 @@ public:
 
     void setPin(int pin);
     void play(void);
+
+    bool isPlaying(void);
 };
 
 #endif // BUZZER_H

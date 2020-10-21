@@ -1,0 +1,35 @@
+On RPI to execute the binary:
+- must be root
+- must have this environment:
+export DISPLAY=:0.0
+export QT_QPA_PLATFORMTHEME=qt5ct
+export XAUTHORITY=/home/pi/.Xauthority 
+export XDG_SESSION_TYPE=x11
+added to /root/.bashrc
+
+login and enable X access:
+$ sudo ssh  -i /root/.ssh/qtc_id root@192.168.10.158
+# xhost +
+
+Initial pin setup every time after reboot:
+$ sudo -i
+# echo "16" > /sys/class/gpio/export
+# gpio -g mode 16 up
+# echo "21" > /sys/class/gpio/export
+# echo out > /sys/class/gpio/gpio21/direction
+
+if getting error "Could not queue DRM page flip on screen ":
+# export QT_QPA_EGLFS_KMS_ATOMIC=1
+
+List disk labels:
+$ blkid
+
+List block devices:
+$lsblk
+$lsblk -fs
+
+Make filesystem and setup storage:
+# mkfs.ext4 /dev/sdb1 -L ICGCAMERA
+# echo "LABEL=ICGCAMERA	/media/icgcamera	ext4	defaults	0	0" >> /etc/fstab
+# mount -a
+# mkdir /media/icgcamera/DCIM

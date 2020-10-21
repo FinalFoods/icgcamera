@@ -7,6 +7,7 @@
 #include <raspicam/raspicam.h>
 
 #include "buzzer.h"
+#include "storage.h"
 
 namespace Ui {
 class MainWindow;
@@ -16,9 +17,10 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
     raspicam::RaspiCam Camera;
+    int imSize;
     void *imbuf;
     Buzzer buzzer;
-
+    Storage storage;
 
 public:
     explicit MainWindow(QWidget *parent = 0);
