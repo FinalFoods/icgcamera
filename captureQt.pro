@@ -18,6 +18,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         buzzer.cpp \
+        irleds.cpp \
         main.cpp \
         mainwindow.cpp \
         storage.cpp
@@ -44,5 +45,6 @@ FORMS += \
 
 HEADERS += \
     buzzer.h \
+    irleds.h \
     mainwindow.h \
     storage.h

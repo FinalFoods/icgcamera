@@ -8,6 +8,7 @@
 
 #include "buzzer.h"
 #include "storage.h"
+#include "irleds.h"
 
 namespace Ui {
 class MainWindow;
@@ -21,6 +22,7 @@ class MainWindow : public QMainWindow
     void *imbuf;
     Buzzer buzzer;
     Storage storage;
+    IRleds irleds;
 
 public:
     explicit MainWindow(QWidget *parent = 0);

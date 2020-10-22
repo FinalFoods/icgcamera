@@ -18,8 +18,14 @@
 
 using namespace cv;
 
+// BUZZER OUTPUT PIN
 #define BUZZER_PIN 21
+// SHUTTER BUTTON
 #define SHUTTER_PIN 16
+// ILLUMINATOR BUTTON
+#define IRLEDSBTN_PIN 24
+// IR LEDs ILLUMINATOR OUTPUT PIN
+#define IRLEDS_PIN 23
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -37,13 +43,19 @@ MainWindow::MainWindow(QWidget *parent) :
         qInfo("Error in gpioInitialise().");
     }
 
-    // -- buzzer setup
-    buzzer.setPin(BUZZER_PIN);
-
     // ------------------ shutter button setup
     gpioSetMode(SHUTTER_PIN, PI_INPUT);
     gpioSetPullUpDown(SHUTTER_PIN, PI_PUD_UP);
     gpioSetAlertFuncEx(SHUTTER_PIN, _callbackExt, (void *)this);
+    // -- buzzer setup
+    buzzer.setPin(BUZZER_PIN);
+    // ----------------- IR LEDs illuminator button
+    gpioSetMode(IRLEDSBTN_PIN, PI_INPUT);
+    gpioSetPullUpDown(IRLEDSBTN_PIN, PI_PUD_UP);
+    gpioSetAlertFuncEx(IRLEDSBTN_PIN, _callbackExt, (void *)this);
+    // IR LEDS setup
+    irleds.setPin(IRLEDS_PIN);
+    // buttons debounce in msec
     debounce = 250;
 
     // ----------------------- camera setup
@@ -73,15 +85,15 @@ void MainWindow::handleResults(int res) {
 void MainWindow::_callback(int gpio, int level, uint32_t tick)
 {
     int ret;
+    // qInfo("in _callback. gpio: %d", gpio);
 
     if (buzzer.isPlaying())
             return;
-
-    qInfo("in_callback. starting buzzer and save image.");
     buzzer.play();
     storage.saveImage(imbuf, imSize, Camera.getWidth(), Camera.getHeight());
 }
 
+// buttons common callback
 void MainWindow::_callbackExt(int gpio, int level, uint32_t tick, void *user)
 {
     MainWindow *mySelf = (MainWindow *) user;
@@ -94,8 +106,24 @@ void MainWindow::_callbackExt(int gpio, int level, uint32_t tick, void *user)
     if (d.count() < mySelf->debounce)
         return;
 
-    mySelf->_callback(gpio, level, tick);
+    // dispatch to the specific button callback
+    switch (gpio) {
+        case SHUTTER_PIN:
+            mySelf->_callback(gpio, level, tick);
+            break;
+        case IRLEDSBTN_PIN:
+            mySelf->irleds.toggle();
+            break;
+    }
 }
+
+// LED illuminator button callback
+/*
+static void _IRcallbackExt(int gpio, int level, uint32_t tick, void *user)
+{
+
+}
+*/
 
 void MainWindow::paintEvent(QPaintEvent* event)
 {
