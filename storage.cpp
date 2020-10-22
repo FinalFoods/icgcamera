@@ -81,13 +81,16 @@ int Storage::getDirName(char *dirName)
     }
     strcpy(last, namelist[n - 1]->d_name);
     for (i = 0; i < n; i++) {
-        //qInfo("getDirName: %s.", namelist[i]->d_name);
+        qInfo("getDirName: %s.", namelist[i]->d_name);
         free(namelist[i]);
     }
     free(namelist);
 
+    if (strcmp(last, "..") == 0)
+        return 0; // new disk
+
     if (strlen(last) != 7) {
-        qInfo("ERROR: Reading top directory %s. Largest name not compliant.", dirName);
+        qInfo("ERROR: Reading top directory %s. Largest name not compliant. (%d)", dirName, strlen(last));
         return -1;
     }
 
@@ -108,16 +111,22 @@ void Storage::saveImage(void *buf, int bufSize, int width, int height)
     // figure out the directory name
     ret = getDirName((BASEDIR ROOTDIR));
     if (ret < 0) {
-        qInfo("ERROR: Saving the image %s. (ret = %d)", dirName, ret);
-        return;
-    }
-    sprintf(dirName, "%s/%d_ICG", (BASEDIR ROOTDIR), ret);
-
-    // figure out the filename
-    ret = getFileName(dirName);
-    if (ret < 0) {
         qInfo("ERROR: Saving the image. (ret = %d)", ret);
         return;
+    }
+    if (ret == 0) {
+        // new disk
+        sprintf(dirName, "%s/%d_ICG", (BASEDIR ROOTDIR), 100);
+        mkdir(dirName, 0755);
+        ret = 1;
+    } else {
+        sprintf(dirName, "%s/%d_ICG", (BASEDIR ROOTDIR), ret);
+        // figure out the filename
+        ret = getFileName(dirName);
+        if (ret < 0) {
+            qInfo("ERROR: Saving the image. (ret = %d)", ret);
+            return;
+        }
     }
 
     if (ret == 0) {
