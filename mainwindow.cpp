@@ -13,19 +13,11 @@
 #include <pigpio/pigpio.h>
 
 #include "mainwindow.h"
+#include "pins.h"
 #include "ui_mainwindow.h"
-#include "buzzer.h"
+#include "shutter.h"
 
 using namespace cv;
-
-// BUZZER OUTPUT PIN
-#define BUZZER_PIN 21
-// SHUTTER BUTTON
-#define SHUTTER_PIN 16
-// ILLUMINATOR BUTTON
-#define IRLEDSBTN_PIN 24
-// IR LEDs ILLUMINATOR OUTPUT PIN
-#define IRLEDS_PIN 23
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -46,13 +38,13 @@ MainWindow::MainWindow(QWidget *parent) :
     // ------------------ shutter button setup
     gpioSetMode(SHUTTER_PIN, PI_INPUT);
     gpioSetPullUpDown(SHUTTER_PIN, PI_PUD_UP);
-    gpioSetAlertFuncEx(SHUTTER_PIN, _callbackExt, (void *)this);
+    gpioSetAlertFuncEx(SHUTTER_PIN, _buttonsCallback, (void *)this);
     // -- buzzer setup
-    buzzer.setPin(BUZZER_PIN);
+    shutter.setBuzzerPin(BUZZER_PIN);
     // ----------------- IR LEDs illuminator button
     gpioSetMode(IRLEDSBTN_PIN, PI_INPUT);
     gpioSetPullUpDown(IRLEDSBTN_PIN, PI_PUD_UP);
-    gpioSetAlertFuncEx(IRLEDSBTN_PIN, _callbackExt, (void *)this);
+    gpioSetAlertFuncEx(IRLEDSBTN_PIN, _buttonsCallback, (void *)this);
     // IR LEDS setup
     irleds.setPin(IRLEDS_PIN);
     // buttons debounce in msec
@@ -60,7 +52,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // ----------------------- camera setup
     Camera.setVerticalFlip(true);
-    //Open camera
     qInfo("Opening Camera...");
     if (!Camera.open()) {
         qInfo("Error opening camera");
@@ -68,7 +59,7 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     // wait until the camera stabilizes
     qInfo("Camera width, height: %d %d", Camera.getWidth(), Camera.getHeight());
-    qInfo("Sleeping for 3 secs");
+    qInfo("Ready in 3 secs...");
     usleep(3000000);
     qInfo("Camera ready.");
 }
@@ -78,23 +69,8 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::handleResults(int res) {
-    qInfo("in handleResults.");
-}
-
-void MainWindow::_callback(int gpio, int level, uint32_t tick)
-{
-    int ret;
-    // qInfo("in _callback. gpio: %d", gpio);
-
-    if (buzzer.isPlaying())
-            return;
-    buzzer.play();
-    storage.saveImage(imbuf, imSize, Camera.getWidth(), Camera.getHeight());
-}
-
 // buttons common callback
-void MainWindow::_callbackExt(int gpio, int level, uint32_t tick, void *user)
+void MainWindow::_buttonsCallback(int gpio, int level, uint32_t tick, void *user)
 {
     MainWindow *mySelf = (MainWindow *) user;
 
@@ -109,7 +85,11 @@ void MainWindow::_callbackExt(int gpio, int level, uint32_t tick, void *user)
     // dispatch to the specific button callback
     switch (gpio) {
         case SHUTTER_PIN:
-            mySelf->_callback(gpio, level, tick);
+            if (mySelf->shutter.isBuzzerPlaying())
+                    return;
+            mySelf->shutter.buzzerPlay();
+            mySelf->storage.saveImage(mySelf->imbuf, mySelf->imSize, mySelf->Camera.getWidth(), mySelf->Camera.getHeight());
+        //mySelf->_callback(gpio, level, tick);
             break;
         case IRLEDSBTN_PIN:
             mySelf->irleds.toggle();
@@ -117,14 +97,7 @@ void MainWindow::_callbackExt(int gpio, int level, uint32_t tick, void *user)
     }
 }
 
-// LED illuminator button callback
-/*
-static void _IRcallbackExt(int gpio, int level, uint32_t tick, void *user)
-{
-
-}
-*/
-
+// update UI
 void MainWindow::paintEvent(QPaintEvent* event)
 {
     QPainter painter(this);

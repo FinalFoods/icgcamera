@@ -17,10 +17,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        buzzer.cpp \
         irleds.cpp \
         main.cpp \
         mainwindow.cpp \
+        shutter.cpp \
         storage.cpp
 
 #RESOURCES += qml.qrc
@@ -44,7 +44,8 @@ FORMS += \
     mainwindow.ui
 
 HEADERS += \
-    buzzer.h \
     irleds.h \
     mainwindow.h \
+    pins.h \
+    shutter.h \
     storage.h

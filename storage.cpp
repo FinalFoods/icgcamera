@@ -81,7 +81,7 @@ int Storage::getDirName(char *dirName)
     }
     strcpy(last, namelist[n - 1]->d_name);
     for (i = 0; i < n; i++) {
-        qInfo("getDirName: %s.", namelist[i]->d_name);
+        // qInfo("getDirName: %s.", namelist[i]->d_name);
         free(namelist[i]);
     }
     free(namelist);

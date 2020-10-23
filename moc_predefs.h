@@ -141,6 +141,7 @@
 #define __LDBL_HAS_QUIET_NAN__ 1
 #define __ULACCUM_IBIT__ 32
 #define __FLT64_MANT_DIG__ 53
+#define _REENTRANT 1
 #define __UACCUM_EPSILON__ 0x1P-16UK
 #define __GNUC__ 7
 #define __ULLACCUM_MAX__ 0XFFFFFFFFFFFFFFFFP-32ULLK
