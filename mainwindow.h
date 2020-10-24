@@ -6,7 +6,6 @@
 #include <QPainter>
 #include <raspicam/raspicam.h>
 
-//#include "buzzer.h"
 #include "shutter.h"
 #include "storage.h"
 #include "irleds.h"
@@ -21,10 +20,15 @@ class MainWindow : public QMainWindow
     raspicam::RaspiCam Camera;
     int imSize;
     void *imbuf;
-    //Buzzer buzzer;
+    int cameraWidth, cameraHeight;
+
     Shutter shutter;
     Storage storage;
     IRleds irleds;
+    std::chrono::high_resolution_clock::time_point last_time;
+    int debounce;
+    bool recording;
+    int recRate;
 
 public:
     explicit MainWindow(QWidget *parent = 0);
@@ -37,8 +41,7 @@ private:
 
     void _callback(int, int, uint32_t);
     static void _buttonsCallback(int, int, uint32_t, void*);
-    std::chrono::high_resolution_clock::time_point last_time;
-    int debounce;
+
 };
 
 #endif // MAINWINDOW_H

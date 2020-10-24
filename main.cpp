@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
     // timer loop to refresh the camera image on the main window
     QObject::connect(&timer, &QTimer::timeout, [&]()
         {
-            w.update();
+            w.update(); // emit a paint event to w
         });
 
     // refresh at 30 frames per second

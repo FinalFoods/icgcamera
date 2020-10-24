@@ -46,7 +46,7 @@ void Shutter::buzzerPlay() {
     int ret = 0;
     pthread_t *playThread;
 
-    qInfo("in Buzzer::play");
+    //qInfo("in Buzzer::play");
     playThread = gpioStartThread(_buzzerPlay, (void *)&buzzer_pin);
 }
 

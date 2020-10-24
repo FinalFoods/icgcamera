@@ -33,3 +33,9 @@ Make filesystem and setup storage:
 # echo "LABEL=ICGCAMERA	/media/icgcamera	ext4	defaults	0	0" >> /etc/fstab
 # mount -a
 # mkdir /media/icgcamera/DCIM
+
+
+sudo ffmpeg -f rawvideo -s 1280x960 -pix_fmt rgb24 -i IMG_00001.raw IMG_00001-1.jpg
+
+ sudo ffmpeg -framerate 10 -s 1280x960 -pix_fmt rgb24 -i IMG_%05d.raw -c:v libx264 -r 30 -pix_fmt yuv420p out.mp4
+

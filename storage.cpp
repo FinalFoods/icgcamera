@@ -8,7 +8,11 @@
 #include <QtGui/QPixmap>
 
 #include <dirent.h>
+#include <iostream>
+#include <fstream>
 #include "storage.h"
+
+using namespace std;
 
 /*
  * Functions to manage a Design rule for Camera File system (DCF)
@@ -105,7 +109,7 @@ void Storage::saveImage(void *buf, int bufSize, int width, int height)
 {
     char fileName[256];
     char dirName[256];
-    void *imbuf = ::operator new (bufSize);
+//    void *imbuf = ::operator new (bufSize);
     int ret;
 
     // figure out the directory name
@@ -142,7 +146,7 @@ void Storage::saveImage(void *buf, int bufSize, int width, int height)
     qInfo("Saving image in %s", fileName);
 
     // save the image buffer
-    memcpy(imbuf, buf, bufSize);
+//    memcpy(imbuf, buf, bufSize);
     // create a QImage and convert to a QPixmap
     QImage qimg = QImage((uchar *)buf, width, height, QImage::Format_RGB888);
     QPixmap qpix = QPixmap(width, height);
@@ -173,3 +177,42 @@ bool Storage::fileExists(const std::string& fileName)
     return f.good();
 }
 
+/*
+ * Functions to handle video recording
+ */
+void Storage::prepareRecording(void)
+{
+    // get a temp directory in ramfs
+    strcpy(videoDirName, "/video/XXXXXX");
+    mktemp(videoDirName);
+    mkdir(videoDirName, 0755);
+    qInfo("in prepareRecording. dirName: %s", videoDirName);
+    // reset image counter
+    imgCounter = 0;
+}
+
+// max number of frames in a video (15 minutes -- 30 frames/sec * 60 secs * 15 mins)
+#define MAXNUMFRAMES 27000
+
+int Storage::saveFrame(const char *buf, int bufSize, int width, int height)
+{
+    char fileName[256];
+    ofstream file;
+
+    if (imgCounter > MAXNUMFRAMES)
+        return -1;
+    // 12 characters filenames like IMG_0001.raw
+    sprintf(fileName, "%s/IMG_%05d.raw", videoDirName, ++imgCounter);
+
+    file.open(fileName, ios::out | ios::binary);
+    file.write(buf, bufSize);
+    file.close();
+
+    return 0;
+}
+
+void Storage::finalizeRecording(void)
+{
+    // make video file from raw images
+    // remove image files
+}

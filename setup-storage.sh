@@ -22,4 +22,6 @@ mkdir -p /mnt/DCIM
 # on the RPI add the fstab entry and mount the disk
 #echo "LABEL=ICGCAMERA	/media/icgcamera	ext4	defaults	0	0" >> /etc/fstab
 #mount -a
-
+#
+# create a ramfs for video images
+#echo "tmpfs	/video	tmpfs	defaults,noatime,size=8G	0	0" >> /etc/fstab

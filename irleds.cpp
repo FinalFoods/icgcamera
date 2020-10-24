@@ -27,7 +27,7 @@ void IRleds::setPin(int pin)
 bool IRleds::toggle() {
     int ret = 0;
 
-    qInfo("in IRleds::toggle");
+    //qInfo("in IRleds::toggle");
     state = !state;
     if ((ret = gpioWrite(leds_pin, state)) != 0) {
         qInfo("in IRleds::toggle. Error writing pin %d", leds_pin);
